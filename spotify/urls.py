@@ -16,12 +16,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
-from spotify.views import hello
-from spotify.views import index
+from spotify.views import author_posts, hello, index, post_details
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
     path('hello/', hello),
+    path('posts/<int:id>/', post_details),
+    path('authors/<int:id>/posts', author_posts),
     path('<str:name>/<int:number>/', index),
-    path("__debug__/", include("debug_toolbar.urls")),
+    path('__debug__/', include('debug_toolbar.urls')),
 ]
