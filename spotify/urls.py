@@ -19,7 +19,7 @@ from django.urls import include, path
 from spotify.views import author_posts, create_post, hello, index, post_details, posts
 
 urlpatterns = [
-    # path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls),
     path('hello/', hello),
     path('posts/<int:id>/', post_details),
     path('posts', posts),

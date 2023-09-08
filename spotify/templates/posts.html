@@ -1,8 +1,11 @@
 {% extends "base.html" %}
 
+{% load static %}
+
 {% block title %}Posts | Spotify{% endblock %}
 
 {% block content %}
+<img src="{% static 'parrot.jpg' %}" style="width: 50%">
 <ul>
 {% for post in posts %}
 	{% if post.is_new %}

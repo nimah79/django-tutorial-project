@@ -9,8 +9,8 @@ class Person(models.Model):
 
 class User(models.Model):
     GENDER_CHOICES = (
-        ('m', 'male'),
-        ('f', 'female'),
+        ('m', 'Male'),
+        ('f', 'Female'),
     )
 
     username = models.CharField(max_length=255)
@@ -30,6 +30,9 @@ class User(models.Model):
         self.gender = 'f' if self.gender == 'm' else 'm'
         self.save()
 
+    def __str__(self):
+        return self.username
+
 
 class Post(models.Model):
     title = models.CharField(max_length=255)
@@ -37,3 +40,6 @@ class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     # Many to many: authors = models.ManyToManyField(User)
     # One to one: author = models.OneToOneField(User)
+
+    def __str__(self):
+        return f'{self.id}. {self.title}'

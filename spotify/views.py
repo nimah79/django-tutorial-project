@@ -5,6 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 from spotify.models import Person, Post, User
+from spotify.forms import CreatePostForm
 
 
 def hello(request):
@@ -81,17 +82,17 @@ def posts(request):
     return render(request, 'posts.html', context={'posts': posts})
 
 
-@csrf_exempt
 def create_post(request):
-    author_id = request.POST.get('author_id')
+    if request.method == 'GET':
+        return render(
+            request,
+            'create_post.html',
+            {'form': CreatePostForm()}
+        )
+    form = CreatePostForm(request.POST)
+    if not form.is_valid():
+        return JsonResponse({'error': 'bad request'}, status=400)
 
-    try:
-        user = User.objects.get(id=author_id)
-    except:
-        return JsonResponse({'error': 'not found'}, status=404)
-
-    title = request.POST.get('title')
-    content = request.POST.get('content')
-    user.post_set.create(author_id=author_id, title=title, content=content)
+    form.save()
 
     return JsonResponse({'ok': True})

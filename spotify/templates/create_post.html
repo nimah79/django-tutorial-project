@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Create a new post | Spotify{% endblock %}
+
+{% block content %}
+<form id="create-post-form" method="post">
+	{% csrf_token %}
+	{{ form.as_p }}
+	<input type="submit" value="Add">
+</form>
+{% endblock %}
