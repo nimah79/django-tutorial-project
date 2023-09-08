@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Posts | Spotify{% endblock %}
+
+{% block content %}
+<ul>
+{% for post in posts %}
+	{% if post.is_new %}
+	<li>{{ post.title }} (new)</li>
+	<li>{{ post.content|default:"NULL" }}</li>
+	{% else %}
+	<li>{{ post.title|lower }} (length: {{ post.title|length }})</li>
+	<li>{{ post.id|filesizeformat }}</li>
+	<li>{{ post.content|upper|truncatewords:2 }}</li>
+	<li>{{ post.content|truncatewords:2|upper }}</li> <!-- Has a better performance -->
+	{% endif %}
+	<br>
+{% endfor %}
+</ul>
+{% endblock %}
