@@ -1,7 +1,9 @@
 from django.shortcuts import HttpResponse, render
 from django.http import JsonResponse, HttpResponseNotFound
 from django.db.models import Count, Avg, Sum, Min, Max, F, Q
+from django.views import View
 from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import CreateView, DetailView, ListView
 
 
 from spotify.models import Person, Post, User
@@ -82,17 +84,40 @@ def posts(request):
     return render(request, 'posts.html', context={'posts': posts})
 
 
-def create_post(request):
-    if request.method == 'GET':
+class CreatePostView(View):
+    def get(self, request):
         return render(
             request,
             'create_post.html',
             {'form': CreatePostForm()}
         )
-    form = CreatePostForm(request.POST)
-    if not form.is_valid():
-        return JsonResponse({'error': 'bad request'}, status=400)
 
-    form.save()
 
-    return JsonResponse({'ok': True})
+    def post(self, request):
+        form = CreatePostForm(request.POST)
+        if not form.is_valid():
+            return JsonResponse({'error': 'bad request'}, status=400)
+
+            form.save()
+
+        return JsonResponse({'ok': True})
+
+
+class UserListView(ListView):
+    model = User
+    # template_name = 'users/list.html'
+    context_object_name = 'users'
+    # queryset = User.objects.filter(gender='m')
+    paginate_by = 1
+
+
+class UserDetailView(DetailView):
+    model = User
+
+class UserCreateView(CreateView):
+    model = User
+    fields = [
+        'username',
+        'gender',
+        'email',
+    ]
