@@ -21,5 +21,10 @@ class Post(models.Model):
     # Many to many: authors = models.ManyToManyField(User)
     # One to one: author = models.OneToOneField(User)
 
+    class Meta:
+        permissions = [
+            ('change_post_content', 'Can change post content')
+        ]
+
     def __str__(self):
         return f'{self.id}. {self.title}'

@@ -5,14 +5,20 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView, DeleteView, DetailView, FormView, ListView, UpdateView
 from django.urls import reverse_lazy
-from django.contrib.auth import authenticate, login as dj_login
+from django.contrib.auth import authenticate, login as dj_login, logout as dj_logout
+from django.contrib.auth.decorators import login_required, permission_required
 
 
 from spotify.models import Person, Post, User
 from spotify.forms import ContactForm, CreatePostForm, SignUpForm
 
 
+@login_required(login_url='/login')
+@permission_required('spotify.view_post', raise_exception=True)
 def hello(request):
+    if not request.user.is_authenticated:
+        return HttpResponse('401')
+
     users = User.objects.annotate(post_count=Count('post'))
     response = '<html><body>'
     for user in users:
@@ -180,3 +186,40 @@ def login(request):
         return HttpResponse('Invalid credentials')
     dj_login(request, user)
     return HttpResponse('Logged in successfully!')
+
+
+@csrf_exempt
+def change_password(request):
+    if request.method == 'GET':
+        return HttpResponse('Send a POST request')
+
+    if not request.user.is_authenticated:
+        return HttpResponse('401')
+
+    old_password = request.POST.get('old_password')
+    new_password1 = request.POST.get('new_password1')
+    new_password2 = request.POST.get('new_password2')
+
+    if new_password1 != new_password2:
+        return HttpResponse('New passwords are not identical')
+
+    if not request.user.check_password(old_password):
+        return HttpResponse('Wrong old password')
+
+    request.user.set_password(new_password1)
+    request.user.save()
+
+    return HttpResponse('Password changed successfully!')
+
+
+@csrf_exempt
+def logout(request):
+    if request.method == 'GET':
+        return HttpResponse('Send a POST request')
+
+    if not request.user.is_authenticated:
+        return HttpResponse('401')
+
+    dj_logout(request)
+
+    return HttpResponse('Logged out successfully!')

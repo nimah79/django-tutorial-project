@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title></title>
+	<style>
+		.hidden {
+			display: none;
+		}
+
+		.block {
+			display: block;
+		}
+	</style>
+</head>
+<body>
+	<form>
+		<input id="newpassword1" type="text" />
+		<input id="newpassword2" type="text" onkeyup="processChange()" />
+		<p id="newpassword2_error" class="hidden" style="color: red;"><small>New password confirmation is not identical to password</small></p>
+		<button onclick="processChange()">Click me</button>
+	</form>
+	<script>
+		function debounce(func, timeout = 1000) {
+		  let timer;
+		  return (...args) => {
+		    clearTimeout(timer);
+		    console.log('Cleared timeout')
+		    timer = setTimeout(() => { func.apply(this, args); }, timeout);
+		  };
+		}
+
+		function checkPasswordConfirmation() {
+			let newpassword1 = document.getElementById('newpassword1').value;
+			let newpassword2 = document.getElementById('newpassword2').value;
+			if (newpassword1 != newpassword2) {
+				document.getElementById('newpassword2_error').classList.remove('hidden');
+				document.getElementById('newpassword2_error').classList.add('block');
+			}
+		}
+
+		const processChange = debounce(() => checkPasswordConfirmation());
+	</script>
+</body>
+</html>
