@@ -16,17 +16,22 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
-from spotify.views import author_posts, CreatePostView, UserCreateView, UserDetailView, UserListView, hello, index, post_details, posts
+from spotify.views import author_posts, ContactFormView, CreatePostView, login, signup, UserCreateView, UserDeleteView, UserDetailView, UserListView, UserUpdateView, hello, index, post_details, posts
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('hello/', hello),
     path('posts/<int:id>/', post_details),
     path('posts', posts),
-    path('users', UserListView.as_view()),
-    path('users/<int:pk>', UserDetailView.as_view()),
+    path('signup', signup, name='signup'),
+    path('login', login, name='login'),
+    path('users', UserListView.as_view(), name='user-list'),
+    path('users/<int:pk>', UserDetailView.as_view(), name='user-detail'),
+    path('users/<int:pk>/update', UserUpdateView.as_view(), name='user-update'),
+    path('users/<int:pk>/delete', UserDeleteView.as_view(), name='user-delete'),
     path('users/new', UserCreateView.as_view()),
     path('create_post', CreatePostView.as_view()),
+    path('contact', ContactFormView.as_view()),
     path('authors/<int:id>/posts', author_posts),
     path('<str:name>/<int:number>/', index),
     path('__debug__/', include('debug_toolbar.urls')),

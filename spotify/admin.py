@@ -8,7 +8,7 @@ class PostInline(admin.StackedInline):
 	model = Post
 
 
-@admin.register(User)
+# @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
 	list_display = ['id', 'username', 'gender', 'email']
 	sortable_by = ['id', 'username', 'email']

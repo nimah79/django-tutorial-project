@@ -3,11 +3,13 @@ from django.http import JsonResponse, HttpResponseNotFound
 from django.db.models import Count, Avg, Sum, Min, Max, F, Q
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import CreateView, DetailView, ListView
+from django.views.generic import CreateView, DeleteView, DetailView, FormView, ListView, UpdateView
+from django.urls import reverse_lazy
+from django.contrib.auth import authenticate, login as dj_login
 
 
 from spotify.models import Person, Post, User
-from spotify.forms import CreatePostForm
+from spotify.forms import ContactForm, CreatePostForm, SignUpForm
 
 
 def hello(request):
@@ -114,6 +116,7 @@ class UserListView(ListView):
 class UserDetailView(DetailView):
     model = User
 
+
 class UserCreateView(CreateView):
     model = User
     fields = [
@@ -121,3 +124,59 @@ class UserCreateView(CreateView):
         'gender',
         'email',
     ]
+
+
+class UserUpdateView(UpdateView):
+    model = User
+    fields = [
+        'username',
+        'gender',
+        'email',
+    ]
+    template_name_suffix = '_update_form'
+
+
+class UserDeleteView(DeleteView):
+    model = User
+    success_url = reverse_lazy('user-list')
+
+
+class ContactFormView(FormView):
+    template_name = "contact.html"
+    form_class = ContactForm
+    success_url = "/thanks/"
+
+    def form_valid(self, form):
+        # This method is called when valid form data has been POSTed.
+        # It should return an HttpResponse.
+        form.send_email()
+        return HttpResponse('Form submitted successfully!')
+        # return super().form_valid(form)
+
+
+@csrf_exempt
+def signup(request):
+    if request.method == 'GET':
+        return HttpResponse('Send a POST request')
+
+    form = SignUpForm(request.POST)
+
+    if not form.is_valid():
+        return HttpResponse(f'{form.errors}')
+
+    form.save()
+    return HttpResponse('User signed up successfully!')
+
+
+@csrf_exempt
+def login(request):
+    if request.method == 'GET':
+        return HttpResponse('Send a POST request')
+
+    username = request.POST['username']
+    password = request.POST['password']
+    user = authenticate(request, username=username, password=password)
+    if not user:
+        return HttpResponse('Invalid credentials')
+    dj_login(request, user)
+    return HttpResponse('Logged in successfully!')

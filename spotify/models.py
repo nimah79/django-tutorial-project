@@ -1,4 +1,6 @@
 from django.db import models
+from django.urls import reverse
+from django.contrib.auth.models import User
 
 
 class Person(models.Model):
@@ -7,31 +9,9 @@ class Person(models.Model):
     age = models.IntegerField()
 
 
-class User(models.Model):
-    GENDER_CHOICES = (
-        ('m', 'Male'),
-        ('f', 'Female'),
-    )
-
-    username = models.CharField(max_length=255)
-    gender = models.CharField(
-        max_length=255,
-        choices=GENDER_CHOICES,
-        default='f',
-    )
-    email = models.EmailField()
-    last_visit = models.DateTimeField()
-    # BooleanField
-    # DateField
-    # FloatField
-    # TextField
-
-    def toggle_gender(self):
-        self.gender = 'f' if self.gender == 'm' else 'm'
-        self.save()
-
-    def __str__(self):
-        return self.username
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    phone_number = models.CharField(max_length=255)
 
 
 class Post(models.Model):
