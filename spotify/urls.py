@@ -16,15 +16,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
-from spotify.views import author_posts, ContactFormView, CreatePostView, login, logout, signup, change_password, UserCreateView, UserDeleteView, UserDetailView, UserListView, UserUpdateView, hello, index, post_details, posts
+from spotify.views import PingAPIView, author_posts, ContactFormView, AboutUsView, CreatePostView, LoginView, logout, SignUpView, change_password, UserCreateView, UserDeleteView, UserDetailView, UserListView, UserUpdateView, hello, index, post_details, posts
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', hello),
+    path('ping', PingAPIView.as_view()),
     path('posts/<int:id>/', post_details),
     path('posts', posts),
-    path('signup', signup, name='signup'),
-    path('login', login, name='login'),
+    path('signup', SignUpView.as_view(), name='signup'),
+    path('login', LoginView.as_view(), name='login'),
     path('change_password', change_password, name='change_password'),
     path('logout', logout, name='logout'),
     path('users', UserListView.as_view(), name='user-list'),
@@ -34,6 +35,7 @@ urlpatterns = [
     path('users/new', UserCreateView.as_view()),
     path('create_post', CreatePostView.as_view()),
     path('contact', ContactFormView.as_view()),
+    path('about', AboutUsView.as_view()),
     path('authors/<int:id>/posts', author_posts),
     path('<str:name>/<int:number>/', index),
     path('__debug__/', include('debug_toolbar.urls')),

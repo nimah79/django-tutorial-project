@@ -3,10 +3,14 @@ from django.http import JsonResponse, HttpResponseNotFound
 from django.db.models import Count, Avg, Sum, Min, Max, F, Q
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import CreateView, DeleteView, DetailView, FormView, ListView, UpdateView
+from django.views.generic import CreateView, DeleteView, DetailView, FormView, ListView, UpdateView, TemplateView
 from django.urls import reverse_lazy
 from django.contrib.auth import authenticate, login as dj_login, logout as dj_logout
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.forms import AuthenticationForm
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from rest_framework.views import APIView
 
 
 from spotify.models import Person, Post, User
@@ -160,32 +164,40 @@ class ContactFormView(FormView):
         # return super().form_valid(form)
 
 
-@csrf_exempt
-def signup(request):
-    if request.method == 'GET':
+class PostMethodOnlyMixin:
+    def get(self, request):
         return HttpResponse('Send a POST request')
 
-    form = SignUpForm(request.POST)
 
-    if not form.is_valid():
-        return HttpResponse(f'{form.errors}')
-
-    form.save()
-    return HttpResponse('User signed up successfully!')
+class SignUpView(View):
+    def get(self, request):
+        return render(request, 'spotify/signup.html', context={'form': SignUpForm()})
 
 
-@csrf_exempt
-def login(request):
-    if request.method == 'GET':
-        return HttpResponse('Send a POST request')
+    def post(self, request):
+        form = SignUpForm(request.POST)
+        # serializer = PostSerializer(request.data)
 
-    username = request.POST['username']
-    password = request.POST['password']
-    user = authenticate(request, username=username, password=password)
-    if not user:
-        return HttpResponse('Invalid credentials')
-    dj_login(request, user)
-    return HttpResponse('Logged in successfully!')
+        if not form.is_valid():
+            return render(request, 'spotify/signup.html', context={'form': form})
+
+        form.save()
+        return HttpResponse('User signed up successfully!')
+
+
+class LoginView(View):
+    def get(self, request):
+        return render(request, 'spotify/login.html', context={'form': AuthenticationForm()})
+
+
+    def post(self, request):
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if not user:
+            return HttpResponse('Invalid credentials')
+        dj_login(request, user)
+        return HttpResponse('Logged in successfully!')
 
 
 @csrf_exempt
@@ -223,3 +235,26 @@ def logout(request):
     dj_logout(request)
 
     return HttpResponse('Logged out successfully!')
+
+
+class AboutUsView(TemplateView):
+    template_name = 'about.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['team_people'] = [
+            'Ali',
+            'Hassan',
+            'Hesam',
+        ]
+        return context
+
+
+@api_view(['GET'])
+def ping(request):
+    return Response({'ok': True})
+
+
+class PingAPIView(APIView):
+    def get(self, request):
+        return Response({'ok': True})
