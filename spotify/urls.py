@@ -15,8 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from django.views.decorators.csrf import csrf_exempt
 
-from spotify.views import PingAPIView, author_posts, ContactFormView, AboutUsView, CreatePostView, LoginView, logout, SignUpView, change_password, UserCreateView, UserDeleteView, UserDetailView, UserListView, UserUpdateView, hello, index, post_details, posts
+from rest_framework.authtoken.views import obtain_auth_token
+
+from spotify.views import PingAPIView, PostAPIView, SinglePostAPIView, author_posts, ContactFormView, AboutUsView, CreatePostView, LoginView, logout, SignUpView, change_password, UserCreateView, UserDeleteView, UserDetailView, UserListView, UserUpdateView, hello, index, post_details, posts
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -33,10 +36,22 @@ urlpatterns = [
     path('users/<int:pk>/update', UserUpdateView.as_view(), name='user-update'),
     path('users/<int:pk>/delete', UserDeleteView.as_view(), name='user-delete'),
     path('users/new', UserCreateView.as_view()),
-    path('create_post', CreatePostView.as_view()),
+    path('create_post', csrf_exempt(CreatePostView.as_view())),
     path('contact', ContactFormView.as_view()),
     path('about', AboutUsView.as_view()),
     path('authors/<int:id>/posts', author_posts),
     path('<str:name>/<int:number>/', index),
+    path('api/posts', csrf_exempt(PostAPIView.as_view())),
+    path('api/posts/<int:post_id>', SinglePostAPIView.as_view()),
+    path('api/login', view=obtain_auth_token),
     path('__debug__/', include('debug_toolbar.urls')),
 ]
+
+# POST /api/posts
+# GET /api/posts
+# GET /api/posts/<int:id>
+# PUT /api/posts/<int:id>
+# DELETE /api/posts/<int:id>
+# GET /api/posts/<int:id>/comments
+# GET /api/post_comments/<int:id>
+# GET /api/comments/<int:id>

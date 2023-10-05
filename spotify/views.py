@@ -11,10 +11,13 @@ from django.contrib.auth.forms import AuthenticationForm
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
+from rest_framework.generics import GenericAPIView, get_object_or_404
+from rest_framework.permissions import IsAuthenticated
 
 
 from spotify.models import Person, Post, User
 from spotify.forms import ContactForm, CreatePostForm, SignUpForm
+from spotify.serializers import PostSerializer
 
 
 @login_required(login_url='/login')
@@ -255,6 +258,41 @@ def ping(request):
     return Response({'ok': True})
 
 
-class PingAPIView(APIView):
+class PingAPIView(GenericAPIView):
+    permission_classes = (IsAuthenticated,)
+
     def get(self, request):
         return Response({'ok': True})
+
+
+class PostAPIView(APIView):
+    def post(self, request):
+        post_serializer = PostSerializer(data=request.data)
+        if not post_serializer.is_valid():
+            return Response({'ok': False, 'message': post_serializer.errors})
+        
+        post_serializer.save()
+        return Response({'ok': True, 'message': 'Post created successfully!'})
+
+
+class SinglePostAPIView(APIView):
+    def get(self, request, post_id):
+        post = get_object_or_404(Post, id=post_id)
+        post_serializer = PostSerializer(instance=post)
+
+        return Response({'data': post_serializer.data})
+
+
+    def put(self, request, post_id):
+        post = get_object_or_404(Post, id=post_id)
+        post_serializer = PostSerializer(
+            instance=post,
+            data=request.data,
+            partial=True
+        )
+        if not post_serializer.is_valid():
+            return Response({'ok': False, 'message': post_serializer.errors})
+
+        post_serializer.save()
+        return Response({'ok': True, 'message': 'Post updated successfully!'})
+        
