@@ -19,7 +19,13 @@ from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework.authtoken.views import obtain_auth_token
 
-from spotify.views import PingAPIView, PostAPIView, SinglePostAPIView, author_posts, ContactFormView, AboutUsView, CreatePostView, LoginView, logout, SignUpView, change_password, UserCreateView, UserDeleteView, UserDetailView, UserListView, UserUpdateView, hello, index, post_details, posts
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView,
+)
+
+from spotify.views import PingAPIView, PostAPIView, LogoutAPIView, SinglePostAPIView, author_posts, ContactFormView, AboutUsView, CreatePostView, LoginView, logout, SignUpView, change_password, UserCreateView, UserDeleteView, UserDetailView, UserListView, UserUpdateView, hello, index, post_details, posts
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -41,9 +47,13 @@ urlpatterns = [
     path('about', AboutUsView.as_view()),
     path('authors/<int:id>/posts', author_posts),
     path('<str:name>/<int:number>/', index),
-    path('api/posts', csrf_exempt(PostAPIView.as_view())),
+    path('api/posts', PostAPIView.as_view()),
     path('api/posts/<int:post_id>', SinglePostAPIView.as_view()),
     path('api/login', view=obtain_auth_token),
+    path('api/logout', view=LogoutAPIView.as_view()),
+    path('api/token', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/verify', TokenVerifyView.as_view(), name='token_verify'),
     path('__debug__/', include('debug_toolbar.urls')),
 ]
 

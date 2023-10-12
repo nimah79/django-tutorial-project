@@ -17,6 +17,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from spotify.models import Person, Post, User
 from spotify.forms import ContactForm, CreatePostForm, SignUpForm
+from spotify.permissions import BlacklistPermission
 from spotify.serializers import PostSerializer
 
 
@@ -262,7 +263,7 @@ class PingAPIView(GenericAPIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        return Response({'ok': True})
+        return Response({'ok': True, 'ip': request.META['REMOTE_ADDR']})
 
 
 class PostAPIView(APIView):
@@ -295,4 +296,13 @@ class SinglePostAPIView(APIView):
 
         post_serializer.save()
         return Response({'ok': True, 'message': 'Post updated successfully!'})
+
+
+class LogoutAPIView(GenericAPIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        request.user.auth_token.delete()
+
+        return Response({'ok': True})
         
