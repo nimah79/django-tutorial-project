@@ -18,6 +18,7 @@ from django.urls import include, path
 from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework.authtoken.views import obtain_auth_token
+from rest_framework.routers import DefaultRouter
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -25,14 +26,19 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView,
 )
 
-from spotify.views import PingAPIView, PostAPIView, LogoutAPIView, SinglePostAPIView, author_posts, ContactFormView, AboutUsView, CreatePostView, LoginView, logout, SignUpView, change_password, UserCreateView, UserDeleteView, UserDetailView, UserListView, UserUpdateView, hello, index, post_details, posts
+from spotify.views import PingAPIView, PostViewSet, PostAPIView, LogoutAPIView, SinglePostAPIView, author_posts, ContactFormView, AboutUsView, CreatePostView, LoginView, logout, SignUpView, change_password, UserCreateView, UserDeleteView, UserDetailView, UserListView, UserUpdateView, hello, index, post_details, posts
+
+
+router = DefaultRouter()
+router.register(r'posts', PostViewSet)
 
 urlpatterns = [
+    path('', include(router.urls)),
     path('admin/', admin.site.urls),
     path('', hello),
     path('ping', PingAPIView.as_view()),
     path('posts/<int:id>/', post_details),
-    path('posts', posts),
+    # path('posts', posts),
     path('signup', SignUpView.as_view(), name='signup'),
     path('login', LoginView.as_view(), name='login'),
     path('change_password', change_password, name='change_password'),

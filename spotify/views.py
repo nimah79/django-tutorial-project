@@ -13,6 +13,7 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.generics import GenericAPIView, get_object_or_404
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.viewsets import ViewSet, ModelViewSet
 
 
 from spotify.models import Person, Post, User
@@ -266,7 +267,17 @@ class PingAPIView(GenericAPIView):
         return Response({'ok': True, 'ip': request.META['REMOTE_ADDR']})
 
 
+class PostViewSet(ModelViewSet):
+    serializer_class = PostSerializer
+    queryset = Post.objects.all()
+
+
 class PostAPIView(APIView):
+    def get(self, request):
+        post_serializer = PostSerializer(Post.objects.all(), many=True)
+
+        return Response({'ok': True, 'data': post_serializer.data})
+
     def post(self, request):
         post_serializer = PostSerializer(data=request.data)
         if not post_serializer.is_valid():
