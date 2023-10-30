@@ -2,17 +2,20 @@ from django.shortcuts import HttpResponse, render
 from django.http import JsonResponse, HttpResponseNotFound
 from django.db.models import Count, Avg, Sum, Min, Max, F, Q
 from django.views import View
+from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView, DeleteView, DetailView, FormView, ListView, UpdateView, TemplateView
 from django.urls import reverse_lazy
 from django.contrib.auth import authenticate, login as dj_login, logout as dj_logout
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.forms import AuthenticationForm
+from django.core.cache import cache
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.generics import GenericAPIView, get_object_or_404
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from rest_framework.viewsets import ViewSet, ModelViewSet
 
 
@@ -273,6 +276,8 @@ class PostViewSet(ModelViewSet):
 
 
 class PostAPIView(APIView):
+    throttle_classes = [AnonRateThrottle, UserRateThrottle]
+
     def get(self, request):
         post_serializer = PostSerializer(Post.objects.all(), many=True)
 
@@ -316,4 +321,9 @@ class LogoutAPIView(GenericAPIView):
         request.user.auth_token.delete()
 
         return Response({'ok': True})
-        
+
+
+def cache_example(request):
+    value = cache.get('my_key')
+    cache.set('my_key', 'hello, world!', 10)
+    return HttpResponse(value)
