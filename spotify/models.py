@@ -28,3 +28,7 @@ class Post(models.Model):
 
     def __str__(self):
         return f'{self.id}. {self.title}'
+
+
+class JwtIdentifier(models.Model):
+    identifier = models.CharField(max_length=255)
