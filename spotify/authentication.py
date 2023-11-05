@@ -16,7 +16,11 @@ AuthUser = TypeVar("AuthUser", AbstractBaseUser, TokenUser)
 
 class CustomJWTAuthentication(JWTAuthentication):
     def authenticate(self, request: Request) -> Optional[Tuple[AuthUser, Token]]:
-        user, validated_token = super().authenticate(request)
+        auth_result = super().authenticate(request)
+        if auth_result is None:
+            return None
+
+        user, validated_token = auth_result
 
         try:
             identifier = validated_token['identifier']

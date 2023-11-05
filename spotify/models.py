@@ -8,6 +8,12 @@ class Person(models.Model):
     last_name = models.CharField(max_length=255)
     age = models.IntegerField()
 
+    def is_older_than(self, age):
+        return self.age > age
+
+    def __str__(self):
+        return self.first_name
+
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
