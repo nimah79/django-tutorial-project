@@ -1,10 +1,11 @@
 from django.http.response import HttpResponseForbidden
 
+
 def blacklist_middleware(get_response):
     def middleware(request):
-        ip_address = request.META['REMOTE_ADDR']
+        ip_address = request.META["REMOTE_ADDR"]
 
-        if ip_address not in ('127.0.0.12',):
+        if ip_address not in ("127.0.0.12",):
             return HttpResponseForbidden()
 
         return get_response(request)
@@ -17,9 +18,9 @@ class BlacklistMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        ip_address = request.META['REMOTE_ADDR']
+        ip_address = request.META["REMOTE_ADDR"]
 
-        if ip_address not in ('127.0.0.1',):
+        if ip_address not in ("127.0.0.1",):
             return HttpResponseForbidden()
 
         return self.get_response(request)

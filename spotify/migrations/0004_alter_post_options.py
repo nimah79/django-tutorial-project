@@ -4,14 +4,15 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('spotify', '0003_profile_alter_post_author_delete_user'),
+        ("spotify", "0003_profile_alter_post_author_delete_user"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='post',
-            options={'permissions': [('change_post_content', 'Can change post content')]},
+            name="post",
+            options={
+                "permissions": [("change_post_content", "Can change post content")]
+            },
         ),
     ]

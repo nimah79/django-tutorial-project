@@ -4,17 +4,24 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('spotify', '0004_alter_post_options'),
+        ("spotify", "0004_alter_post_options"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='JwtIdentifier',
+            name="JwtIdentifier",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('identifier', models.CharField(max_length=255)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("identifier", models.CharField(max_length=255)),
             ],
         ),
     ]

@@ -5,29 +5,56 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('spotify', '0001_initial'),
+        ("spotify", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='User',
+            name="User",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('username', models.CharField(max_length=255)),
-                ('gender', models.CharField(choices=[('m', 'male'), ('f', 'female')], default='f', max_length=255)),
-                ('email', models.EmailField(max_length=254)),
-                ('last_visit', models.DateTimeField()),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("username", models.CharField(max_length=255)),
+                (
+                    "gender",
+                    models.CharField(
+                        choices=[("m", "male"), ("f", "female")],
+                        default="f",
+                        max_length=255,
+                    ),
+                ),
+                ("email", models.EmailField(max_length=254)),
+                ("last_visit", models.DateTimeField()),
             ],
         ),
         migrations.CreateModel(
-            name='Post',
+            name="Post",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=255)),
-                ('content', models.TextField()),
-                ('author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='spotify.user')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=255)),
+                ("content", models.TextField()),
+                (
+                    "author",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="spotify.user"
+                    ),
+                ),
             ],
         ),
     ]

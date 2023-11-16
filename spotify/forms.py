@@ -6,13 +6,13 @@ from spotify.models import Post, Profile, User
 
 
 class CreatePostForm(forms.ModelForm):
-	# def __init__(self, *args, **kwargs):
-	# 	super(CreatePostForm, self).__init__(*args, **kwargs)
-	# 	self.fields['content'].required = False
+    # def __init__(self, *args, **kwargs):
+    # 	super(CreatePostForm, self).__init__(*args, **kwargs)
+    # 	self.fields['content'].required = False
 
-	class Meta:
-		model = Post
-		fields = ('author', 'title', 'content')
+    class Meta:
+        model = Post
+        fields = ("author", "title", "content")
 
 
 class ContactForm(forms.Form):
@@ -25,13 +25,13 @@ class ContactForm(forms.Form):
 
 
 class SignUpForm(UserCreationForm):
-	phone_number = forms.CharField(max_length=255)
+    phone_number = forms.CharField(max_length=255)
 
-	class Meta:
-		model = User
-		fields = ('username', 'phone_number', 'password1', 'password2')
+    class Meta:
+        model = User
+        fields = ("username", "phone_number", "password1", "password2")
 
-	def save(self, commit=True):
-		user = super().save(commit=commit)
-		Profile.objects.create(user=user, phone_number=self.data['phone_number'])
-		return user
+    def save(self, commit=True):
+        user = super().save(commit=commit)
+        Profile.objects.create(user=user, phone_number=self.data["phone_number"])
+        return user

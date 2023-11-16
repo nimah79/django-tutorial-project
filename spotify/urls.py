@@ -26,42 +26,44 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView,
 )
 
-from spotify.views import PingAPIView, PostViewSet, PostAPIView, LogoutAPIView, SinglePostAPIView, author_posts, ContactFormView, AboutUsView, CreatePostView, LoginView, cache_example, logout, SignUpView, change_password, UserCreateView, UserDeleteView, UserDetailView, UserListView, UserUpdateView, hello, index, post_details, posts
-
+from spotify.views import *
 
 router = DefaultRouter()
-router.register(r'posts', PostViewSet)
+router.register(r"posts", PostViewSet)
+router.register(r"countries", CountryViewSet)
+router.register(r"cities", CityViewSet)
+router.register(r"artists", ArtistViewSet)
 
 urlpatterns = [
-    path('', include(router.urls)),
-    path('admin/', admin.site.urls),
-    path('', hello),
-    path('ping', PingAPIView.as_view()),
-    path('posts/<int:id>/', post_details),
+    path("", include(router.urls)),
+    path("admin/", admin.site.urls),
+    path("", hello),
+    path("ping", PingAPIView.as_view()),
+    path("posts/<int:id>/", post_details),
     # path('posts', posts),
-    path('signup', SignUpView.as_view(), name='signup'),
-    path('login', LoginView.as_view(), name='login'),
-    path('change_password', change_password, name='change_password'),
-    path('logout', logout, name='logout'),
-    path('users', UserListView.as_view(), name='user-list'),
-    path('users/<int:pk>', UserDetailView.as_view(), name='user-detail'),
-    path('users/<int:pk>/update', UserUpdateView.as_view(), name='user-update'),
-    path('users/<int:pk>/delete', UserDeleteView.as_view(), name='user-delete'),
-    path('users/new', UserCreateView.as_view()),
-    path('create_post', csrf_exempt(CreatePostView.as_view())),
-    path('contact', ContactFormView.as_view()),
-    path('about', AboutUsView.as_view()),
-    path('authors/<int:id>/posts', author_posts),
-    path('<str:name>/<int:number>/', index),
-    path('api/posts', PostAPIView.as_view()),
-    path('api/posts/<int:post_id>', SinglePostAPIView.as_view()),
-    path('api/login', view=obtain_auth_token),
-    path('api/logout', view=LogoutAPIView.as_view()),
-    path('api/token', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/token/verify', TokenVerifyView.as_view(), name='token_verify'),
-    path('cache', cache_example),
-    path('__debug__/', include('debug_toolbar.urls')),
+    path("signup", SignUpView.as_view(), name="signup"),
+    path("login", LoginView.as_view(), name="login"),
+    path("change_password", change_password, name="change_password"),
+    path("logout", logout, name="logout"),
+    path("users", UserListView.as_view(), name="user-list"),
+    path("users/<int:pk>", UserDetailView.as_view(), name="user-detail"),
+    path("users/<int:pk>/update", UserUpdateView.as_view(), name="user-update"),
+    path("users/<int:pk>/delete", UserDeleteView.as_view(), name="user-delete"),
+    path("users/new", UserCreateView.as_view()),
+    path("create_post", csrf_exempt(CreatePostView.as_view())),
+    path("contact", ContactFormView.as_view()),
+    path("about", AboutUsView.as_view()),
+    path("authors/<int:id>/posts", author_posts),
+    path("<str:name>/<int:number>/", index),
+    path("api/posts", PostAPIView.as_view()),
+    path("api/posts/<int:post_id>", SinglePostAPIView.as_view()),
+    path("api/login", view=obtain_auth_token),
+    path("api/logout", view=LogoutAPIView.as_view()),
+    path("api/token", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/token/refresh", TokenRefreshView.as_view(), name="token_refresh"),
+    path("api/token/verify", TokenVerifyView.as_view(), name="token_verify"),
+    path("cache", cache_example),
+    path("__debug__/", include("debug_toolbar.urls")),
 ]
 
 # POST /api/posts

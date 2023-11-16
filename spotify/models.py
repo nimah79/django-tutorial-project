@@ -38,12 +38,10 @@ class Post(models.Model):
     # One to one: author = models.OneToOneField(User)
 
     class Meta:
-        permissions = [
-            ('change_post_content', 'Can change post content')
-        ]
+        permissions = [("change_post_content", "Can change post content")]
 
     def __str__(self):
-        return f'{self.id}. {self.title}'
+        return f"{self.id}. {self.title}"
 
 
 class JwtIdentifier(models.Model):
@@ -53,38 +51,37 @@ class JwtIdentifier(models.Model):
 class Country(ModelWithTimestamps):
     name = models.CharField(max_length=255)
 
+    def __str__(self):
+        return self.name
+
 
 class City(ModelWithTimestamps):
     name = models.CharField(max_length=255)
     country = models.ForeignKey(
-        Country,
-        related_name='cities',
-        on_delete=models.CASCADE
+        Country, related_name="cities", on_delete=models.CASCADE
     )
 
+    def __str__(self):
+        return self.name
 
-class Like(models.Model):
+
+class Like(ModelWithTimestamps):
     type = models.BooleanField()
-    user = models.ForeignKey(
-        User,
-        related_name='likes',
-        on_delete=models.CASCADE
-    )
+    user = models.ForeignKey(User, related_name="likes", on_delete=models.CASCADE)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
+    liked_object = GenericForeignKey("content_type", "object_id")
+
+    def __str__(self):
+        return ("like" if self.type else "dislike") + f" from user {self.user_id}"
 
 
-class Rate(models.Model):
+class Rate(ModelWithTimestamps):
     type = models.BooleanField()
-    user = models.ForeignKey(
-        User,
-        related_name='rates',
-        on_delete=models.CASCADE
-    )
+    user = models.ForeignKey(User, related_name="rates", on_delete=models.CASCADE)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
+    content_object = GenericForeignKey("content_type", "object_id")
 
 
 class Artist(ModelWithTimestamps):
@@ -102,18 +99,14 @@ class Album(ModelWithTimestamps):
     name = models.CharField(max_length=255)
     release_datetime = models.DateTimeField()
     image = models.TextField()
-    genres = models.ManyToManyField(Genre, related_name='albums')
+    genres = models.ManyToManyField(Genre, related_name="albums")
     likes = GenericRelation(Like)
     rates = GenericRelation(Rate)
 
 
 class Cover(ModelWithTimestamps):
     image = models.TextField()
-    album = models.ForeignKey(
-        Album,
-        related_name='covers',
-        on_delete=models.CASCADE
-    )
+    album = models.ForeignKey(Album, related_name="covers", on_delete=models.CASCADE)
     likes = GenericRelation(Like)
     rates = GenericRelation(Rate)
 
@@ -125,43 +118,27 @@ class Track(ModelWithTimestamps):
     path_128 = models.TextField()
     path_320 = models.TextField()
     album = models.ForeignKey(
-        Album,
-        blank=True,
-        null=True,
-        related_name='tracks',
-        on_delete=models.CASCADE
+        Album, blank=True, null=True, related_name="tracks", on_delete=models.CASCADE
     )
-    artist = models.ForeignKey(
-        Artist,
-        related_name='tracks',
-        on_delete=models.CASCADE
-    )
+    artist = models.ForeignKey(Artist, related_name="tracks", on_delete=models.CASCADE)
     likes = GenericRelation(Like)
     rates = GenericRelation(Rate)
 
 
 class Playlist(ModelWithTimestamps):
     name = models.CharField(max_length=255)
-    user = models.ForeignKey(
-        User,
-        related_name='playlists',
-        on_delete=models.CASCADE
-    )
-    tracks = models.ManyToManyField(Track, through='PlaylistTrack')
+    user = models.ForeignKey(User, related_name="playlists", on_delete=models.CASCADE)
+    tracks = models.ManyToManyField(Track, through="PlaylistTrack")
     likes = GenericRelation(Like)
     rates = GenericRelation(Rate)
 
 
 class PlaylistTrack(ModelWithTimestamps):
     playlist = models.ForeignKey(
-        Playlist,
-        related_name='playlist_tracks',
-        on_delete=models.CASCADE
+        Playlist, related_name="playlist_tracks", on_delete=models.CASCADE
     )
     track = models.ForeignKey(
-        Track,
-        related_name='playlist_tracks',
-        on_delete=models.CASCADE
+        Track, related_name="playlist_tracks", on_delete=models.CASCADE
     )
 
 
@@ -173,21 +150,17 @@ class Subscription(ModelWithTimestamps):
 
 class UserSubscription(ModelWithTimestamps):
     user = models.ForeignKey(
-        User,
-        related_name='user_subscriptions',
-        on_delete=models.CASCADE
+        User, related_name="user_subscriptions", on_delete=models.CASCADE
     )
     subscription = models.ForeignKey(
-        Subscription,
-        related_name='user_subscriptions',
-        on_delete=models.CASCADE
+        Subscription, related_name="user_subscriptions", on_delete=models.CASCADE
     )
 
 
 class Coupon(ModelWithTimestamps):
     COUPON_TYPES = (
-        ('p', 'percent'),
-        ('a', 'amount'),
+        ("p", "percent"),
+        ("a", "amount"),
     )
     title = models.CharField(max_length=255)
     type = models.CharField(max_length=1, choices=COUPON_TYPES)
@@ -202,20 +175,39 @@ class Coupon(ModelWithTimestamps):
 
 class Voucher(ModelWithTimestamps):
     subscription = models.ForeignKey(
-        Subscription,
-        related_name='vouchers',
-        on_delete=models.CASCADE
+        Subscription, related_name="vouchers", on_delete=models.CASCADE
     )
 
 
 class VoucherRedeem(ModelWithTimestamps):
     user = models.ForeignKey(
-        User,
-        related_name='voucher_redeems',
-        on_delete=models.CASCADE
+        User, related_name="voucher_redeems", on_delete=models.CASCADE
     )
     voucher = models.ForeignKey(
-        Voucher,
-        related_name='voucher_redeems',
-        on_delete=models.CASCADE
+        Voucher, related_name="voucher_redeems", on_delete=models.CASCADE
     )
+
+
+class Transaction(ModelWithTimestamps):
+    TRANSACTION_STATUSES = (
+        ("p", "pending"),
+        ("s", "successful"),
+        ("r", "rejected"),
+    )
+
+    user = models.ForeignKey(
+        User, related_name="transactions", on_delete=models.CASCADE
+    )
+    coupon = models.ForeignKey(
+        Coupon,
+        blank=True,
+        null=True,
+        related_name="transactions",
+        on_delete=models.CASCADE,
+    )
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    status = models.CharField(max_length=1, choices=TRANSACTION_STATUSES)
+    ref_id = models.CharField(max_length=255, blank=True, null=True)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey("content_type", "object_id")

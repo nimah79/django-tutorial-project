@@ -23,7 +23,7 @@ class CustomJWTAuthentication(JWTAuthentication):
         user, validated_token = auth_result
 
         try:
-            identifier = validated_token['identifier']
+            identifier = validated_token["identifier"]
         except KeyError:
             raise InvalidToken(_("Token contained no identifier"))
         if not JwtIdentifier.objects.filter(identifier=identifier).exists():
