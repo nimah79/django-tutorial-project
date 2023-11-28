@@ -1,3 +1,6 @@
+import datetime
+
+
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
@@ -27,7 +30,16 @@ class Person(models.Model):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    phone_number = models.CharField(max_length=255)
+    premium_until = models.DateTimeField(blank=True, null=True)
+
+    def extend_premium_until(self, seconds):
+        now = datetime.datetime.now()
+        delta = datetime.timedelta(seconds=seconds)
+        if self.premium_until is None or self.premium_until < now:
+            self.premium_until = now + delta
+        else:
+            self.premium_until += delta
+        self.save()
 
 
 class Post(models.Model):
@@ -90,6 +102,9 @@ class Artist(ModelWithTimestamps):
     likes = GenericRelation(Like)
     rates = GenericRelation(Rate)
 
+    def __str__(self):
+        return self.name
+
 
 class Genre(ModelWithTimestamps):
     name = models.CharField(max_length=255)
@@ -102,6 +117,9 @@ class Album(ModelWithTimestamps):
     genres = models.ManyToManyField(Genre, related_name="albums")
     likes = GenericRelation(Like)
     rates = GenericRelation(Rate)
+
+    def __str__(self):
+        return self.name
 
 
 class Cover(ModelWithTimestamps):
@@ -177,6 +195,7 @@ class Voucher(ModelWithTimestamps):
     subscription = models.ForeignKey(
         Subscription, related_name="vouchers", on_delete=models.CASCADE
     )
+    code = models.CharField(max_length=255)
 
 
 class VoucherRedeem(ModelWithTimestamps):
@@ -186,6 +205,11 @@ class VoucherRedeem(ModelWithTimestamps):
     voucher = models.ForeignKey(
         Voucher, related_name="voucher_redeems", on_delete=models.CASCADE
     )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'voucher'], name='user_voucher')
+        ]
 
 
 class Transaction(ModelWithTimestamps):
@@ -208,6 +232,6 @@ class Transaction(ModelWithTimestamps):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=1, choices=TRANSACTION_STATUSES)
     ref_id = models.CharField(max_length=255, blank=True, null=True)
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    content_type = models.ForeignKey(ContentType, limit_choices_to=(models.Q(app_label="spotify", model="subscription") | models.Q(app_label="spotify", model="voucher")), on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey("content_type", "object_id")

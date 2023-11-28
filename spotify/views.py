@@ -344,3 +344,63 @@ class CityViewSet(ModelViewSet):
 class ArtistViewSet(ModelViewSet):
     serializer_class = ArtistSerializer
     queryset = Artist.objects.all()
+
+
+class GenreViewSet(ModelViewSet):
+    serializer_class = GenreSerializer
+    queryset = Genre.objects.all()
+
+
+class AlbumViewSet(ModelViewSet):
+    serializer_class = AlbumSerializer
+    queryset = Album.objects.all()
+
+
+class CoverViewSet(ModelViewSet):
+    serializer_class = CoverSerializer
+    queryset = Cover.objects.all()
+
+
+class TrackViewSet(ModelViewSet):
+    serializer_class = TrackSerializer
+    queryset = Track.objects.all()
+
+
+class PlaylistViewSet(ModelViewSet):
+    serializer_class = PlaylistSerializer
+    queryset = Playlist.objects.all()
+
+
+class PlaylistTrackViewSet(ModelViewSet):
+    serializer_class = PlaylistTrackSerializer
+    queryset = PlaylistTrack.objects.all()
+
+
+class SubscriptionViewSet(ModelViewSet):
+    serializer_class = SubscriptionSerializer
+    queryset = Subscription.objects.all()
+
+
+class UserSubscriptionViewSet(ModelViewSet):
+    serializer_class = UserSubscriptionSerializer
+    queryset = UserSubscription.objects.all()
+
+
+class CouponViewSet(ModelViewSet):
+    serializer_class = CouponSerializer
+    queryset = Coupon.objects.all()
+
+
+class VoucherViewSet(ModelViewSet):
+    serializer_class = VoucherSerializer
+    queryset = Voucher.objects.all()
+
+
+class VoucherRedeemViewSet(ModelViewSet):
+    serializer_class = VoucherRedeemSerializer
+    queryset = VoucherRedeem.objects.all()
+
+
+class TransactionViewSet(ModelViewSet):
+    serializer_class = TransactionSerializer
+    queryset = Transaction.objects.all()

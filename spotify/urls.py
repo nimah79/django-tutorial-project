@@ -28,11 +28,23 @@ from rest_framework_simplejwt.views import (
 
 from spotify.views import *
 
-router = DefaultRouter()
+router = DefaultRouter(trailing_slash=False)
 router.register(r"posts", PostViewSet)
 router.register(r"countries", CountryViewSet)
 router.register(r"cities", CityViewSet)
 router.register(r"artists", ArtistViewSet)
+router.register(r"genres", GenreViewSet)
+router.register(r"albums", AlbumViewSet)
+router.register(r"covers", CoverViewSet)
+router.register(r"tracks", TrackViewSet)
+router.register(r"playlists", PlaylistViewSet)
+router.register(r"playlist_tracks", PlaylistTrackViewSet)
+router.register(r"subscriptions", SubscriptionViewSet)
+router.register(r"user_subscriptions", UserSubscriptionViewSet)
+router.register(r"coupons", CouponViewSet)
+router.register(r"vouchers", VoucherViewSet)
+router.register(r"voucher_redeems", VoucherRedeemViewSet)
+router.register(r"transactions", TransactionViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),

@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "debug_toolbar",
-    "spotify",
+    "spotify.apps.SpotifyConfig",
 ]
 
 MIDDLEWARE = [
@@ -128,7 +128,7 @@ TIME_ZONE = "UTC"
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -157,11 +157,11 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_PAGINATION_CLASS": "spotify.pagination.IdCursorPagination",
     "PAGE_SIZE": 2,
-    "DEFAULT_THROTTLE_CLASSES": [
-        "rest_framework.throttling.AnonRateThrottle",
-        "rest_framework.throttling.UserRateThrottle",
-    ],
-    "DEFAULT_THROTTLE_RATES": {"anon": "10/minute", "user": "100/minute"},
+    # "DEFAULT_THROTTLE_CLASSES": [
+    #     "rest_framework.throttling.AnonRateThrottle",
+    #     "rest_framework.throttling.UserRateThrottle",
+    # ],
+    # "DEFAULT_THROTTLE_RATES": {"anon": "10/minute", "user": "100/minute"},
 }
 
 SIMPLE_JWT = {
