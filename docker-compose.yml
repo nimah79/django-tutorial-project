@@ -1,0 +1,33 @@
+version: '3.9'
+
+services:
+  web:
+    build: .
+    command: gunicorn spotify.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - ./:/usr/src/app/
+    ports:
+      - '8000:8000'
+    env_file:
+      - ./.env
+    depends_on:
+      - mysql
+  nginx:
+    build: ./nginx
+    volumes:
+      - ./static:/usr/src/app/static
+    ports:
+      - '80:80'
+    depends_on:
+      - web
+  mysql:
+    image: mysql:8.2
+    environment:
+      MYSQL_ROOT_PASSWORD: '10111379'
+      MYSQL_DATABASE: spotify
+      MYSQL_USER: example
+      MYSQL_PASSWORD: examplepassword1234
+    volumes:
+      - mysql_data:/var/lib/mysql
+volumes:
+  mysql_data:
